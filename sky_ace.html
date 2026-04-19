@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Baby Tap Game</title>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
+</head>
+<body style="margin:0; padding:0;">
+
+<script>
+const config = {
+    type: Phaser.AUTO,
+    width: window.innerWidth,
+    height: window.innerHeight,
+    backgroundColor: getRandomColor(),
+    scene: {
+        preload: preload,
+        create: create
+    }
+};
+
+const game = new Phaser.Game(config);
+
+let audioCtx;
+let musicGain;
+let musicStarted = false;
+let musicTimer = null;
+
+// 🎨 colores random para bebés
+function getRandomColor() {
+    const colors = ['#ffcc00', '#ff6699', '#66ccff', '#99ff66', '#ff9966'];
+    return colors[Math.floor(Math.random() * colors.length)];
+}
+
+function preload() {
+    // imágenes
+    this.load.image('dog', 'dog.png');
+    this.load.image('cat', 'cat.png');
+
+    // sonidos
+    this.load.audio('dogSound', 'dog.wav');
+    this.load.audio('catSound', 'cat.wav');
+}
+
+function create() {
+
+    const animals = ['dog', 'cat'];
+    const sounds = ['dogSound', 'catSound'];
+
+    this.add.text(20, 20, 'Toca cualquier lugar para comenzar la música de Mozart y los sonidos.', {
+        font: '26px Arial',
+        fill: '#222'
+    });
+
+    this.sound.volume = 0.8;
+    this.sound.pauseOnBlur = false;
+
+    this.input.on('pointerdown', (pointer) => {
+        startBackgroundMusic();
+
+        let x = pointer.x;
+        let y = pointer.y;
+
+        // 🎨 cambia fondo cada toque
+        this.cameras.main.setBackgroundColor(getRandomColor());
+
+        // elegir animal aleatorio
+        let i = Math.floor(Math.random() * animals.length);
+
+        let img = this.add.image(x, y, animals[i]);
+
+        // tamaño amigable
+        img.setScale(0.6);
+
+        // sonido
+        this.sound.play(sounds[i], { volume: 0.95 });
+
+        // animación
+        this.tweens.add({
+            targets: img,
+            scale: 0.9,
+            duration: 200,
+            yoyo: true,
+            onComplete: () => img.destroy()
+        });
+
+        // 📳 vibración (solo móvil)
+        if (navigator.vibrate) {
+            navigator.vibrate(50);
+        }
+
+    });
+}
+
+function createAudioContext() {
+    if (audioCtx) return;
+
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+
+    audioCtx = new AudioContext();
+    musicGain = audioCtx.createGain();
+    musicGain.gain.value = 0.14;
+    musicGain.connect(audioCtx.destination);
+}
+
+function playTone(frequency, startTime, duration) {
+    if (!audioCtx) return;
+
+    const osc = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+
+    osc.type = 'triangle';
+    osc.frequency.value = frequency;
+
+    gainNode.gain.setValueAtTime(0, startTime);
+    gainNode.gain.linearRampToValueAtTime(0.15, startTime + 0.02);
+    gainNode.gain.linearRampToValueAtTime(0, startTime + duration);
+
+    osc.connect(gainNode);
+    gainNode.connect(musicGain);
+
+    osc.start(startTime);
+    osc.stop(startTime + duration + 0.05);
+}
+
+function scheduleMozartPhrase(startTime) {
+    const notes = [
+        { freq: 440, duration: 0.4 },
+        { freq: 494, duration: 0.4 },
+        { freq: 523, duration: 0.4 },
+        { freq: 587, duration: 0.4 },
+        { freq: 659, duration: 0.8 },
+        { freq: 587, duration: 0.4 },
+        { freq: 523, duration: 0.4 },
+        { freq: 494, duration: 0.4 },
+        { freq: 440, duration: 0.8 }
+    ];
+
+    let time = startTime;
+    for (const note of notes) {
+        playTone(note.freq, time, note.duration);
+        time += note.duration;
+    }
+}
+
+function startBackgroundMusic() {
+    if (musicStarted) return;
+
+    createAudioContext();
+    if (!audioCtx) return;
+
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+
+    playTone(660, audioCtx.currentTime + 0.05, 0.14);
+    scheduleMozartPhrase(audioCtx.currentTime + 0.2);
+    musicTimer = setInterval(() => {
+        scheduleMozartPhrase(audioCtx.currentTime + 0.2);
+    }, 4400);
+
+    musicStarted = true;
+}
+
+function stopBackgroundMusic() {
+    if (musicTimer) {
+        clearInterval(musicTimer);
+        musicTimer = null;
+    }
+    if (audioCtx && audioCtx.state === 'running') {
+        audioCtx.suspend();
+    }
+}
+</script>
+
+</body>
+</html>
