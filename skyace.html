@@ -191,9 +191,10 @@
 
         #bossHealth {
             position: absolute;
-            top: 80px;
-            left: 20px;
+            top: 15px;
             right: 20px;
+            left: auto;
+            width: 280px;
             display: none;
             background: rgba(0, 0, 0, 0.8);
             padding: 10px;
@@ -221,6 +222,83 @@
             width: 100%;
             background: linear-gradient(90deg, #ff3366, #ff9933);
             transition: width 0.1s ease;
+        }
+
+        #mobile-movement {
+            flex: 1;
+            min-height: 140px;
+            border: none;
+            background: transparent;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #mobile-movement .move-hint {
+            display: none;
+        }
+
+        .username-panel {
+            margin: 20px auto 10px;
+            text-align: center;
+        }
+
+        .username-panel label {
+            display: block;
+            color: #0f8;
+            font-size: 12px;
+            margin-bottom: 6px;
+            letter-spacing: 2px;
+        }
+
+        .username-panel input {
+            width: 220px;
+            max-width: 90vw;
+            padding: 10px 12px;
+            border: 2px solid rgba(0, 255, 136, 0.4);
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            font-size: 16px;
+            text-align: center;
+            outline: none;
+        }
+
+        .username-panel input::placeholder {
+            color: #555;
+        }
+
+        .record-history {
+            width: 260px;
+            max-width: 90vw;
+            margin: 0 auto 10px;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: 12px;
+            font-size: 12px;
+            color: #eee;
+            text-align: left;
+            display: grid;
+            gap: 4px;
+        }
+
+        .record-history-title {
+            color: #0f8;
+            letter-spacing: 2px;
+            font-size: 11px;
+            text-align: center;
+            margin-bottom: 6px;
+        }
+
+        .record-row {
+            display: flex;
+            justify-content: space-between;
+            color: #ccc;
+        }
+
+        .record-row span:first-child {
+            color: #fff;
         }
 
         /* Overlay */
@@ -323,58 +401,45 @@
             display: none;
             pointer-events: auto;
             z-index: 20;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        @media (min-width: 768px) {
+            #mobile-controls {
+                display: none !important;
+            }
         }
 
         .control-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
+            width: 100%;
+            gap: 10px;
+            align-items: flex-end;
         }
 
         .direction-pad {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            grid-template-rows: 1fr 1fr 1fr;
-            gap: 5px;
-            width: 120px;
-            height: 120px;
+            display: none;
         }
-
-        .dir-btn {
-            background: rgba(0, 255, 136, 0.3);
-            border: 2px solid rgba(0, 255, 136, 0.5);
-            border-radius: 8px;
-            color: #0f8;
-            font-size: 16px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.1s;
-            user-select: none;
-        }
-
-        .dir-btn:active {
-            background: rgba(0, 255, 136, 0.6);
-            transform: scale(0.95);
-        }
-
-        .dir-btn.center { grid-column: 2; grid-row: 2; }
 
         .action-buttons {
             display: flex;
             gap: 10px;
+            align-items: center;
+            justify-content: center;
         }
 
         .action-btn {
             background: rgba(255, 170, 68, 0.3);
             border: 2px solid rgba(255, 170, 68, 0.5);
             border-radius: 50%;
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             color: #ffaa44;
-            font-size: 12px;
+            font-size: 20px;
             font-weight: bold;
             display: flex;
             flex-direction: column;
@@ -383,6 +448,13 @@
             cursor: pointer;
             transition: all 0.1s;
             user-select: none;
+            text-align: center;
+            min-width: 50px;
+            max-width: 50px;
+        }
+
+        .action-btn span:last-child {
+            display: none;
         }
 
         .action-btn:active {
@@ -393,7 +465,37 @@
         .action-btn.small {
             width: 50px;
             height: 50px;
-            font-size: 10px;
+            font-size: 20px;
+        }
+
+        @media (min-width: 768px) {
+            #stats-container {
+                top: 100px;
+                bottom: auto;
+                left: 20px;
+                right: auto;
+                width: auto;
+                justify-content: flex-start;
+            }
+
+            #combo-meter {
+                top: 140px;
+                bottom: auto;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 220px;
+            }
+
+            #dash-cooldown {
+                top: 20px;
+                bottom: auto;
+                right: 20px;
+                left: auto;
+            }
+
+            #bossHealth {
+                top: 190px;
+            }
         }
     </style>
 </head>
@@ -449,24 +551,19 @@
     <!-- Controles móviles -->
     <div id="mobile-controls">
         <div class="control-row">
-            <div class="direction-pad">
-                <div class="dir-btn" data-key="ArrowUp">↑</div>
-                <div class="dir-btn center"></div>
-                <div class="dir-btn" data-key="ArrowDown">↓</div>
-                <div class="dir-btn" data-key="ArrowLeft">←</div>
-                <div class="dir-btn center"></div>
-                <div class="dir-btn" data-key="ArrowRight">→</div>
+            <div id="mobile-movement">
+                <div class="move-hint">MOVER</div>
             </div>
             <div class="action-buttons">
-                <div class="action-btn" data-key="Space" id="shoot-btn">
+                <div class="action-btn" data-key="Space" id="shoot-btn" title="Disparar" aria-label="Disparar">
                     <span>🚀</span>
                     <span>DISPARAR</span>
                 </div>
-                <div class="action-btn small" data-key="ShiftLeft" id="dash-btn">
+                <div class="action-btn small" data-key="ShiftLeft" id="dash-btn" title="Dash" aria-label="Dash">
                     <span>⚡</span>
                     <span>DASH</span>
                 </div>
-                <div class="action-btn small" data-key="KeyX" id="bomb-btn">
+                <div class="action-btn small" data-key="KeyX" id="bomb-btn" title="Bomba" aria-label="Bomba">
                     <span>💣</span>
                     <span>BOMBA</span>
                 </div>
@@ -477,6 +574,14 @@
     <div id="overlay">
         <div id="title">SKY ACE</div>
         <div class="subtitle">EDICIÓN LEGENDARIA</div>
+        <div class="username-panel">
+            <label for="usernameInput">INGRESA TU NOMBRE</label>
+            <input type="text" id="usernameInput" placeholder="TU NOMBRE AQUÍ" maxlength="12" />
+        </div>
+        <div class="record-history">
+            <div class="record-history-title">RECORDS GUARDADOS</div>
+            <div id="record-list">Cargando...</div>
+        </div>
         <div class="stats-panel" id="stats-panel">
             <p>🔥 SISTEMA DE COMBO x12 🔥</p>
             <p>⚡ 5 NIVELES DE ARMA ⚡</p>
@@ -516,6 +621,37 @@
         const bossFill = document.getElementById('bossFill');
         const bossName = document.getElementById('bossName');
         const shieldBadge = document.getElementById('shield-badge');
+        const userNameInput = document.getElementById('usernameInput');
+        const recordListEl = document.getElementById('record-list');
+        let currentUser = localStorage.getItem('skyace_currentUser') || 'PLAYER';
+        if (userNameInput) {
+            userNameInput.value = currentUser;
+        }
+        const keys = {};
+        const keyPresses = {};
+        
+        window.addEventListener('keydown', (e) => {
+            if (e.code) {
+                if (!keys[e.code]) {
+                    keyPresses[e.code] = true;
+                }
+                keys[e.code] = true;
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.code) {
+                keys[e.code] = false;
+                keyPresses[e.code] = false;
+            }
+        });
+
+        window.addEventListener('blur', () => {
+            for (const key in keys) {
+                delete keys[key];
+                delete keyPresses[key];
+            }
+        });
         
         // Sistema de sonido simplificado
         let audioEnabled = false;
@@ -532,18 +668,46 @@
         }
         
         // High Score
-        function getHighScore() {
-            return parseInt(localStorage.getItem('skyace_highscore') || '0');
-        }
-        
-        function setHighScore(score) {
-            if (score > getHighScore()) {
-                localStorage.setItem('skyace_highscore', score);
-                highScoreEl.innerHTML = `🏆 RÉCORD: ${score} 🏆`;
-                return true;
+        function loadUserRecords() {
+            try {
+                return JSON.parse(localStorage.getItem('skyace_userRecords') || '{}');
+            } catch (e) {
+                return {};
             }
-            highScoreEl.innerHTML = `🏆 RÉCORD: ${getHighScore()} 🏆`;
-            return false;
+        }
+
+        function saveUserRecords(records) {
+            localStorage.setItem('skyace_userRecords', JSON.stringify(records));
+        }
+
+        function getHighScore(userName = currentUser) {
+            const records = loadUserRecords();
+            return parseInt(records[userName] || '0', 10);
+        }
+
+        function updateRecordList(records) {
+            records = records || loadUserRecords();
+            const entries = Object.entries(records)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 6);
+            if (recordListEl) {
+                recordListEl.innerHTML = entries.length
+                    ? entries.map(([name, score]) => `<div class="record-row"><span>${name}</span><span>${score}</span></div>`).join('')
+                    : '<div class="record-row">Ningún récord aún</div>';
+            }
+        }
+
+        function setHighScore(score, userName = currentUser) {
+            const records = loadUserRecords();
+            const previous = parseInt(records[userName] || '0', 10);
+            if (score > previous) {
+                records[userName] = score;
+                saveUserRecords(records);
+                localStorage.setItem('skyace_currentUser', userName);
+            }
+            highScoreEl.innerHTML = `🏆 ${userName}: ${records[userName] || 0} 🏆`;
+            updateRecordList(records);
+            return score > previous;
         }
         
         // Configuración de niveles
@@ -775,7 +939,7 @@
                 
                 bossHealthDiv.style.display = 'block';
                 this.updateBossHealth();
-                bossName.textContent = `👾 ${LEVELS[this.level].name.toUpperCase()} JEFE 👾`;
+                bossName.textContent = '👾 JEFE ENEMIGO 👾';
                 playSound('boss');
                 this.addFloatingText(W/2, 150, '⚠️ JEFE APARECE ⚠️', '#ff0000', 28);
             }
@@ -822,17 +986,11 @@
                         weaponLevelEl.textContent = this.weaponLevel;
                         this.addFloatingText(this.player.x, this.player.y, '⚡ ARMA MEJORADA! ⚡', '#00ffff', 20);
                     }
+                    this.spawnTimer = 0;
                 }
                 
                 scoreEl.textContent = this.score;
                 playSound('victory');
-            }
-            
-            winGame() {
-                this.running = false;
-                this.gameOver = true;
-                const isNewRecord = setHighScore(this.score);
-                this.showGameOver(true, isNewRecord);
             }
             
             takeDamage() {
@@ -1028,13 +1186,15 @@
                 }
                 
                 // Bomba
-                if (keys['KeyX'] && this.frame % 30 === 0) {
+                if (keyPresses['KeyX']) {
                     this.useBomb();
+                    keyPresses['KeyX'] = false;
                 }
                 
                 // Dash
-                if (keys['ShiftLeft'] && this.frame % 30 === 0) {
+                if (keyPresses['ShiftLeft']) {
                     this.dash();
+                    keyPresses['ShiftLeft'] = false;
                 }
                 
                 // Spawn de enemigos
@@ -1529,7 +1689,7 @@
         }
         
         // Detectar dispositivo móvil
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+        const isMobile = ('ontouchstart' in window || navigator.maxTouchPoints > 0) && window.innerWidth < 768;
         const mobileControls = document.getElementById('mobile-controls');
         
         if (isMobile) {
@@ -1538,13 +1698,36 @@
         }
         
         // Manejo de controles móviles
-        const dirBtns = document.querySelectorAll('.dir-btn[data-key]');
         const actionBtns = document.querySelectorAll('.action-btn[data-key]');
+        const mobileMovement = document.getElementById('mobile-movement');
+        let mobileMoveTouchId = null;
+        
+        function resetMobileMove() {
+            keys['ArrowLeft'] = false;
+            keys['ArrowRight'] = false;
+            keys['ArrowUp'] = false;
+            keys['ArrowDown'] = false;
+        }
+        
+        function updateMobileMove(x, y) {
+            if (!mobileMovement) return;
+            const rect = mobileMovement.getBoundingClientRect();
+            const dx = x - (rect.left + rect.width / 2);
+            const dy = y - (rect.top + rect.height / 2);
+            const threshold = 20;
+            keys['ArrowLeft'] = dx < -threshold;
+            keys['ArrowRight'] = dx > threshold;
+            keys['ArrowUp'] = dy < -threshold;
+            keys['ArrowDown'] = dy > threshold;
+        }
         
         function handleTouchStart(e) {
             e.preventDefault();
             const key = e.target.dataset.key || e.target.closest('[data-key]').dataset.key;
             if (key) {
+                if (!keys[key]) {
+                    keyPresses[key] = true;
+                }
                 keys[key] = true;
             }
         }
@@ -1554,16 +1737,9 @@
             const key = e.target.dataset.key || e.target.closest('[data-key]').dataset.key;
             if (key) {
                 keys[key] = false;
+                keyPresses[key] = false;
             }
         }
-        
-        dirBtns.forEach(btn => {
-            btn.addEventListener('touchstart', handleTouchStart);
-            btn.addEventListener('touchend', handleTouchEnd);
-            btn.addEventListener('mousedown', handleTouchStart);
-            btn.addEventListener('mouseup', handleTouchEnd);
-            btn.addEventListener('mouseleave', handleTouchEnd);
-        });
         
         actionBtns.forEach(btn => {
             btn.addEventListener('touchstart', handleTouchStart);
@@ -1572,6 +1748,39 @@
             btn.addEventListener('mouseup', handleTouchEnd);
             btn.addEventListener('mouseleave', handleTouchEnd);
         });
+        
+        if (mobileMovement) {
+            mobileMovement.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                const touch = e.changedTouches[0];
+                mobileMoveTouchId = touch.identifier;
+                updateMobileMove(touch.clientX, touch.clientY);
+            });
+            
+            mobileMovement.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                const touch = Array.from(e.changedTouches).find(t => t.identifier === mobileMoveTouchId);
+                if (touch) {
+                    updateMobileMove(touch.clientX, touch.clientY);
+                }
+            });
+            
+            mobileMovement.addEventListener('touchend', (e) => {
+                const touch = Array.from(e.changedTouches).find(t => t.identifier === mobileMoveTouchId);
+                if (touch) {
+                    mobileMoveTouchId = null;
+                    resetMobileMove();
+                }
+            });
+            
+            mobileMovement.addEventListener('touchcancel', (e) => {
+                const touch = Array.from(e.changedTouches).find(t => t.identifier === mobileMoveTouchId);
+                if (touch) {
+                    mobileMoveTouchId = null;
+                    resetMobileMove();
+                }
+            });
+        }
         
         // Prevenir scroll en móviles
         document.addEventListener('touchmove', (e) => {
@@ -1589,9 +1798,19 @@
                 livesEl.appendChild(life);
             }
         }
+
+        function refreshCurrentUser(save = true) {
+            const trimmedName = userNameInput ? userNameInput.value.trim() : '';
+            currentUser = trimmedName || 'PLAYER';
+            if (save) {
+                localStorage.setItem('skyace_currentUser', currentUser);
+            }
+            setHighScore(getHighScore());
+        }
         
         // Inicializar juego
         function initGame() {
+            refreshCurrentUser(true);
             game = new Game();
             updateLives(3);
             scoreEl.textContent = '0';
@@ -1615,7 +1834,19 @@
             gameLoop();
         }
         
+        if (userNameInput) {
+            userNameInput.addEventListener('input', () => {
+                const typedName = userNameInput.value.trim();
+                const displayName = typedName || currentUser;
+                const score = getHighScore(displayName);
+                highScoreEl.innerHTML = `🏆 ${displayName}: ${score} 🏆`;
+                updateRecordList();
+            });
+            userNameInput.addEventListener('blur', () => refreshCurrentUser(true));
+        }
+
         startBtn.addEventListener('click', () => {
+            refreshCurrentUser(true);
             overlay.style.display = 'none';
             initGame();
         });
