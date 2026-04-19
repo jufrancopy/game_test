@@ -468,7 +468,7 @@
                         <div class="feature">Gratis para siempre</div>
                     </div>
                     <div>
-                        <a href="skyace.html" class="play-button" id="playGameBtn">🎮 JUGAR AHORA</a>
+                        <a href="skyace.html" target="_blank" class="play-button" id="playGameBtn">🎮 JUGAR AHORA</a>
                     </div>
                 </div>
             </div>
@@ -508,7 +508,7 @@
                         <h3 class="game-name">Sky Ace</h3>
                         <div class="game-status">Disponible</div>
                         <p class="game-desc">Shooter arcade con sistema de combo, mejoras y jefes desafiantes.</p>
-                        <a href="#" class="game-link" id="playGameBtn2">JUGAR AHORA →</a>
+                        <a href="skyace.html" target="_blank" class="game-link">JUGAR AHORA →</a>
                     </div>
                     <div class="game-item">
                         <div class="game-icon">🔜</div>
@@ -616,22 +616,6 @@
                 
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             });
-        });
-        
-        // Abrir el juego en nueva ventana
-        function openGame() {
-            window.open('https://jucfra23.github.io/skyace', '_blank');
-        }
-        
-        // Asignar evento a los botones de juego
-        document.getElementById('playGameBtn')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            openGame();
-        });
-        
-        document.getElementById('playGameBtn2')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            openGame();
         });
         
         // Partículas flotantes
