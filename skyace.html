@@ -235,7 +235,25 @@
         }
 
         #mobile-movement .move-hint {
-            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(0, 255, 136, 0.6);
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            pointer-events: none;
+            text-shadow: 0 0 8px rgba(0, 255, 136, 0.4)olute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(0, 255, 136, 0.6);
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            pointer-events: none;
+            text-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
         }
 
         .username-panel {
@@ -417,29 +435,49 @@
             display: flex;
             justify-content: space-between;
             width: 100%;
-            gap: 10px;
+            gap: 15px;
             align-items: flex-end;
         }
 
-        .direction-pad {
-            display: none;
+        #mobile-movement {
+            flex: 1;
+            min-height: 180px;
+            border: 3px solid rgba(0, 255, 136, 0.3);
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(4px);
+        }
+
+        #mobile-movement .move-hint {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(0, 255, 136, 0.6);
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            pointer-events: none;
+            text-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
         }
 
         .action-buttons {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             align-items: center;
             justify-content: center;
         }
 
         .action-btn {
             background: rgba(255, 170, 68, 0.3);
-            border: 2px solid rgba(255, 170, 68, 0.5);
+            border: 3px solid rgba(255, 170, 68, 0.5);
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            width: 70px;
+            height: 70px;
             color: #ffaa44;
-            font-size: 20px;
+            font-size: 24px;
             font-weight: bold;
             display: flex;
             flex-direction: column;
@@ -449,8 +487,9 @@
             transition: all 0.1s;
             user-select: none;
             text-align: center;
-            min-width: 50px;
-            max-width: 50px;
+            min-width: 70px;
+            max-width: 70px;
+            touch-action: none;
         }
 
         .action-btn span:last-child {
@@ -459,13 +498,16 @@
 
         .action-btn:active {
             background: rgba(255, 170, 68, 0.6);
-            transform: scale(0.95);
+            transform: scale(0.9);
+            border-color: #ffaa44;
         }
 
         .action-btn.small {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             font-size: 20px;
+            min-width: 60px;
+            max-width: 60px;
         }
 
         @media (min-width: 768px) {
@@ -1689,12 +1731,14 @@
         }
         
         // Detectar dispositivo móvil
-        const isMobile = ('ontouchstart' in window || navigator.maxTouchPoints > 0) && window.innerWidth < 768;
+        const isMobile = ('ontouchstart' in window || navigator.maxTouchPoints > 0 || window.innerWidth < 768);
         const mobileControls = document.getElementById('mobile-controls');
         
         if (isMobile) {
-            mobileControls.style.display = 'block';
-            document.querySelector('.controls').style.display = 'none';
+            mobileControls.style.display = 'flex';
+            // Hide desktop controls if any
+            const desktopControls = document.querySelector('.controls');
+            if (desktopControls) desktopControls.style.display = 'none';
         }
         
         // Manejo de controles móviles
@@ -1712,13 +1756,27 @@
         function updateMobileMove(x, y) {
             if (!mobileMovement) return;
             const rect = mobileMovement.getBoundingClientRect();
-            const dx = x - (rect.left + rect.width / 2);
-            const dy = y - (rect.top + rect.height / 2);
-            const threshold = 20;
-            keys['ArrowLeft'] = dx < -threshold;
-            keys['ArrowRight'] = dx > threshold;
-            keys['ArrowUp'] = dy < -threshold;
-            keys['ArrowDown'] = dy > threshold;
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const dx = x - centerX;
+            const dy = y - centerY;
+            const threshold = 30; // Increased threshold for better responsiveness
+            
+            // Reset all directions first
+            keys['ArrowLeft'] = false;
+            keys['ArrowRight'] = false;
+            keys['ArrowUp'] = false;
+            keys['ArrowDown'] = false;
+            
+            // Set directions based on touch position
+            if (Math.abs(dx) > threshold) {
+                if (dx < 0) keys['ArrowLeft'] = true;
+                else keys['ArrowRight'] = true;
+            }
+            if (Math.abs(dy) > threshold) {
+                if (dy < 0) keys['ArrowUp'] = true;
+                else keys['ArrowDown'] = true;
+            }
         }
         
         function handleTouchStart(e) {
@@ -1752,6 +1810,8 @@
         if (mobileMovement) {
             mobileMovement.addEventListener('touchstart', (e) => {
                 e.preventDefault();
+                mobileMovement.style.background = 'rgba(0, 255, 136, 0.2)';
+                mobileMovement.style.borderColor = 'rgba(0, 255, 136, 0.6)';
                 const touch = e.changedTouches[0];
                 mobileMoveTouchId = touch.identifier;
                 updateMobileMove(touch.clientX, touch.clientY);
@@ -1766,6 +1826,8 @@
             });
             
             mobileMovement.addEventListener('touchend', (e) => {
+                mobileMovement.style.background = 'rgba(0, 255, 136, 0.1)';
+                mobileMovement.style.borderColor = 'rgba(0, 255, 136, 0.3)';
                 const touch = Array.from(e.changedTouches).find(t => t.identifier === mobileMoveTouchId);
                 if (touch) {
                     mobileMoveTouchId = null;
@@ -1774,6 +1836,8 @@
             });
             
             mobileMovement.addEventListener('touchcancel', (e) => {
+                mobileMovement.style.background = 'rgba(0, 255, 136, 0.1)';
+                mobileMovement.style.borderColor = 'rgba(0, 255, 136, 0.3)';
                 const touch = Array.from(e.changedTouches).find(t => t.identifier === mobileMoveTouchId);
                 if (touch) {
                     mobileMoveTouchId = null;
